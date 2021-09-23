@@ -12,7 +12,7 @@
 #include <getopt.h>
 
 #define BUF_LEN 48000
-#define DEF_FREQ 440
+#define DEF_FREQ 600
 #define DEF_DUR 1
 #define DEF_NOTE 48
 #define MAX_NOTE 87
@@ -168,7 +168,7 @@ void playSeqNote(int numNote, float dur, int start, int stop, int step) {
 
 int main(int argc, char *argv[]) {
     int err;
-   
+
     float freq = DEF_FREQ; // in hertz
     float dur = DEF_DUR; // in seconds
     int note = DEF_NOTE;
@@ -208,58 +208,17 @@ int main(int argc, char *argv[]) {
                 printf("Option incorrect\n");
                 return 1;
           }
-      
     }
-    
+
     // SINE WAVE
     if (err = openDevice()) {
         return EXIT_FAILURE;
     }
-    
-    // playing mode
-    // without options
-    if (mode == 0) {
-        freq = (argc > 1) ? atof(argv[1]) : DEF_FREQ;
-        if (freq == 0) {
-            fprintf(stderr, "AlsaTonic: Invalid frequency.\n");
-            return EXIT_FAILURE;
-        }
 
-        dur = (argc > 2) ? atof(argv[2]) : DEF_DUR;
-        if (dur == 0) {
-            fprintf(stderr, "AlsaTonic: Invalid duration.\n");
-            return EXIT_FAILURE;
-        }
-        
-        start = (argc > 3) ? strtol(argv[3], NULL, 10) : -1;
-        stop = (argc > 4) ? strtol(argv[4], NULL, 10) : 0;
-        step = (argc > 5) ? atof(argv[5]) : 1;
-
-        // Playing freq
-        if (start == -1) {
-            printf("Playing freq, Sine tone at %.3fHz during %.3f secs.\n", freq, dur);
-            playFreq(freq, dur);
-        // Playing sequence freq
-        } else {
-            printf("Playing SeqFreq, Sine tone at %.3fHz, during %.3f secs, start: %d, stop: %d, step: %.3f.\n", freq, dur, start, stop, step);
-            playSeq(freq, dur, start, stop, step);
-        }
-
-    } else if (mode == 1) {
-        printf("Playing Freq, Sine tone at %.3fHz during %.3f sec.\n", freq, dur);
+    while (1)
         playFreq(freq, dur);
-    } else if (mode == 2) {
-        printf("Playing SeqFreq, Sine tone at %.3fHz, during %.3f secs, start: %d, stop: %d, step: %.3f.\n", freq, dur, start, stop, step);
-        playSeq(freq, dur, start, stop, step);
 
-    } else if (mode == 3) {
-        printf("Playing Note at %d, during %.3f secs.\n", note, dur);
-        playNote(note, dur);
-    } else if (mode == 4) {
-        printf("Playing sequence Note at note: %d, during %.3f secs, start: %d, stop: %d, step: %.3f.\n", note, dur, start, stop, step);
-        playSeqNote(note, dur, start, stop, step);
-    } 
-     
+
     printf("nbFrames played: %d\n", g_frames);
 
 
